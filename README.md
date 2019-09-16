@@ -1,5 +1,5 @@
 # IMAGE PROCESSING IN LABEL RECOGNITION
-this repo is the scientific research about image processing in label recognition
+<p>this repo is the scientific research about image processing in label recognition.</p>
 ##__TEAMMATES__
 1. Trần Đình Tiến
 2. Nhan Ngọc Thiện
