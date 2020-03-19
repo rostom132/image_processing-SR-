@@ -59,7 +59,7 @@ def get_pre_borders(mask):
    bot = top + stats[second, 3]
    return left, right, top, bot
 
-precessing_pic = 'input/bottle9.jpg'
+precessing_pic = 'input/bottle8.jpg'
 
 original_img = cv.imread(precessing_pic)
 original_img = cv.cvtColor(original_img, cv.COLOR_BGR2RGB)
@@ -74,18 +74,23 @@ pre_roi = get_roi(image, int(image_w * PRE_ROI_WIDTH), int(image_w - image_w * P
 show(pre_roi, "roi")
 pre_mask = cv.bitwise_not(find_background(image, pre_roi))
 
+show(pre_mask, 'pre_mask')
+erosion = cv.erode(pre_mask,kernel,iterations = 3)
+dilation = cv.dilate(erosion,kernel,iterations = 3)
 temp_mat = np.zeros(pre_mask.shape, dtype=np.uint8)
-
-cnts = cv.findContours(pre_mask, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
+show(dilation, 'dilation')
+cnts = cv.findContours(dilation, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
 cnts = cnts[0] if len(cnts) == 2 else cnts[1]
 cnts = sorted(cnts, key=cv.contourArea, reverse=True)
 for c in cnts:
     cv.drawContours(temp_mat, [c], -1, (255,255,255), -1)
     break
 
-show(temp_mat, 'mask')
+show(temp_mat, 'temp_mat')
 
-left,right, top, bot = get_pre_borders(temp_mat)
+
+
+left,right, top, bot = get_pre_borders(erosion)
 cut_img = image[top:bot , left:right]
 # cut_img = image[:, (left_border - roi_width):(right_border + roi_width)]
 # _, cut_img_w, _ = cut_img.shape
