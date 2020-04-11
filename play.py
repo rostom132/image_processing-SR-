@@ -16,7 +16,7 @@ if (cap.isOpened()== False):
 
 # Read until video is completed\
 #firstframe = None
-subtractor = cv2.createBackgroundSubtractorMOG2(history=120, varThreshold=50, detectShadows=True)
+subtractor = cv2.createBackgroundSubtractorMOG2(history=800, varThreshold=220, detectShadows=True)
 kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(2,2))
 Flag = False
 count = 0
@@ -35,24 +35,16 @@ while True:
     mask = subtractor.apply(frame)
     mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel, iterations=1)
     mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel, iterations=1)
+    # mask = cv2.erode(mask, kernel, iterations = 1)
     mask = cv2.dilate(mask, kernel, iterations=3)
-    # gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    # gray = cv2.GaussianBlur(gray, (25,25), 0)
-    # if firstframe is None:
-    #     firstframe = gray
-    #     continue
-    # frameDelta = cv2.absdiff(firstframe, gray)
-    # thresh = cv2.threshold(frameDelta, 40, 70, cv2.THRESH_BINARY)[1]
-    #
-    # thresh = cv2.dilate(thresh, None, iterations=2)
     cv2.line(frame, (250,0), (250,250), (0, 0, 255), 2)
     cnts = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     cnts = imutils.grab_contours(cnts)
     for c in cnts:
-        if cv2.contourArea(c) < 20000: #Bo may cai contour be hon 20000 pixel
+        if cv2.contourArea(c) < 10000: #Bo may cai contour be hon 20000 pixel
             continue
         (x, y, w, h) = cv2.boundingRect(c)
-        if (w >= 100) and (h>=200):
+        if (w >= 100) and (h>=150):
             cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
             cx,cy = centroid(x,y,w,h)
             cv2.circle(frame, (cx,cy), 5, (0, 0, 255), -1)
